@@ -1,0 +1,104 @@
+<html>
+<meta charset="utf-8">
+<head>
+<style>
+.barUrban{
+  fill:green;
+}
+.barRural{
+  fill:blue;
+}
+</style>
+</head>
+<body>
+<script src="http://d3js.org/d3.v3.min.js"></script>
+<script>
+
+ d3.json("Asia.json", function(error, data) {
+   data.forEach(function(d) {
+       d.year = d.year;
+       d.Ruralpop=parseInt(d.Ruralpop);
+       d.Urbanpop=parseInt(d.Urbanpop);
+       d.Value=d.Ruralpop+d.Urbanpop;
+   });
+
+ var margin = {top: 20, right: 20, bottom: 70, left: 140},
+     width = 700 - margin.left - margin.right,
+     height = 500 - margin.top - margin.bottom;
+
+ var x = d3.scale.ordinal().rangeRoundBands([0, width], .09);
+ var y = d3.scale.linear().range([height,0]);
+
+ var xAxis = d3.svg.axis()
+   .scale(x)
+   .orient("bottom");
+
+ var yAxis = d3.svg.axis()
+   .scale(y)
+   .orient("left");
+
+ var svg = d3.select("body").append("svg")
+   .attr("width", width + margin.left + margin.right)
+   .attr("height", 600 + margin.top + margin.bottom)
+   .append("g")
+   .attr("transform","translate(" + margin.left + "," + margin.top + ")");
+
+ x.domain(data.map(function(d) { return d.year; }));
+ y.domain([0, d3.max(data, function(d) { return d.Value; })]);
+  svg.append("text")
+  .attr("x",200)
+  .attr("y",450)
+  .text("Year");
+ svg.append("g")
+     .attr("class", "x axis")
+     .attr("transform", "translate(0," + height + ")")
+     .call(xAxis)
+
+ svg.append("g")
+     .attr("class", "y axis")
+     .call(yAxis)
+   .append("text")
+     .attr("transform", "rotate(-90)")
+     .attr("y", -120)
+     .attr("x", -200)
+     .text("population");
+ svg.selectAll("bar")
+     .data(data)
+     .enter().append("rect")
+     .attr("class", "barUrban")
+     .attr("x", function(d) { return x(d.year); })
+     .attr("width", x.rangeBand())
+     .attr("y", function(d) { return y(d.Value); })
+     .attr("height", function(d) { return height - y(d.Value); });
+ svg.selectAll("bar")
+     .data(data)
+     .enter().append("rect")
+     .attr("class", "barRural")
+     .attr("x", function(d) { return x(d.year); })
+     .attr("width", x.rangeBand())
+     .attr("y", function(d) { return y(d.Value); })
+     .attr("height", function(d) { return height - y(d.Ruralpop); });
+ svg.append("rect")
+     .attr("width",20)
+     .attr("height",20)
+     .attr("fill","blue")
+     .attr("x",200)
+     .attr("y",50);
+     svg.append("rect")
+     .attr("width",20)
+     .attr("height",20)
+     .attr("fill","green")
+     .attr("x",200)
+     .attr("y",100);
+     svg.append("text")
+     .attr("x",230)
+     .attr("y",65)
+     .text("Rural");
+     svg.append("text")
+     .attr("x",230)
+     .attr("y",115)
+     .text("Urban");
+});
+</script>
+</body>
+</html>

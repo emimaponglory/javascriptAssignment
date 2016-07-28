@@ -1,0 +1,101 @@
+<html lang="en">
+<head>
+     <script src="http://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+
+</head>
+<body>
+   <div>
+         <svg id="d3" width="700" height="600"></svg>
+     </div>
+   <script>
+
+           d3.json("India.json", function(data)
+           {
+       var dd = d3.select("#d3"),
+           WIDTH = 800,
+           HEIGHT = 500,
+           xScale = d3.scale.ordinal().rangeRoundBands([112, WIDTH], .05),
+           yScale = d3.scale.linear().range([480,20]).domain([0,100]);
+           xAxis = d3.svg.axis().scale(xScale),
+           yAxis = d3.svg.axis().scale(yScale);
+           xScale.domain(data.map(function(d) { return d.year; }));
+           dd.append("text")
+            .attr("x", 400)
+            .attr("y", 530)
+            .style("text-anchor", "middle")
+            .style("font-size",18)
+            .style("font-weight","bold")
+            .text("Year");
+           dd.append("g")
+           .attr("class","axis")
+           .attr("transform", "translate(0," + (HEIGHT -20) + ")")
+           .style("font-weight","bold")
+           .call(xAxis);
+           yAxis.orient("left");
+           dd.append("text")
+                   .attr("x",10 )
+                   .attr("y", 300 )
+                   .style("font-size",18)
+                   .style("font-weight","bold")
+                   .text("population");
+           dd.append("g")
+           .attr("class","axis")
+           .attr("transform", "translate(" + (120) + ",0)")
+           .style("font-weight","bold")
+           .call(yAxis);
+          var append=d3.select("body").append("svg").attr("width", 700)
+          .attr("height", 500);
+          var Rural = d3.svg.line()
+          .x(function(d)
+          {
+            return xScale(d.year);
+          })
+          .y(function(d)
+          {
+            return yScale(d.Rval);
+           });
+           var Urban = d3.svg.line()
+           .x(function(d)
+           {
+             return xScale(d.year);
+           })
+           .y(function(d)
+           {
+             return yScale(d.Uval);
+            });
+          dd.append("path")
+          .attr("d",Rural(data))
+          .attr("class","line")
+          .attr("stroke","red")
+          .attr("fill","none")
+          .attr('stroke-width', 3);
+          dd.append("path")
+          .attr("class","line")
+          .attr("stroke","blue")
+          .attr("fill","none")
+          .attr('stroke-width', 3)
+          .attr("d",Urban(data));
+          dd.append("rect")
+          .attr("width",20)
+          .attr("height",20)
+          .attr("fill","red")
+          .attr("x",600)
+          .attr("y",50);
+          dd.append("rect")
+          .attr("width",20)
+          .attr("height",20)
+          .attr("fill","blue")
+          .attr("x",600)
+          .attr("y",100);
+          dd.append("text")
+          .attr("x",640)
+          .attr("y",65)
+          .text("Rural");
+          dd.append("text")
+          .attr("x",640)
+          .attr("y",115)
+          .text("Urban");
+          });
+   </script>
+</body>
+</html
